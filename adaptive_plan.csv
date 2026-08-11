@@ -1,0 +1,6 @@
+course,title,resource_type,difficulty,keywords,Similarity,Learning Level,Daily Study Hours,Practice,Quiz Frequency,AI Tutor Support,Estimated Time,Learning Order
+Python,Python Basics Video,Video,Easy,python beginner programming,0.0,Intermediate,2,3 Days/Week,Weekly,Medium,30 Minutes,1
+Python,Python Revision Notes,PDF,Easy,python revision syntax functions,0.0,Intermediate,2,3 Days/Week,Weekly,Medium,30 Minutes,2
+Deep Learning,Neural Network Revision Notes,PDF,Medium,deep learning revision notes,0.5968891297253892,Intermediate,2,3 Days/Week,Weekly,Medium,45 Minutes,3
+Machine Learning,Machine Learning Classification Notes,PDF,Medium,machine learning classification regression,0.0,Intermediate,2,3 Days/Week,Weekly,Medium,45 Minutes,4
+Machine Learning,Machine Learning Practice Quiz,Quiz,Medium,machine learning quiz practice,0.0,Intermediate,2,3 Days/Week,Weekly,Medium,45 Minutes,5
