@@ -407,6 +407,7 @@ elif page == "📊 Performance Prediction":
 
         st.stop()
 
+
     # ========================================================
     # USER-FRIENDLY CATEGORY MAPPINGS
     # ========================================================
@@ -415,6 +416,7 @@ elif page == "📊 Performance Prediction":
         "♀ Female": 0,
         "♂ Male": 1
     }
+
 
     region_map = {
         "East Anglian Region": 0,
@@ -432,6 +434,7 @@ elif page == "📊 Performance Prediction":
         "Yorkshire Region": 12
     }
 
+
     education_map = {
         "A Level or Equivalent": 0,
         "HE Qualification": 1,
@@ -439,6 +442,7 @@ elif page == "📊 Performance Prediction":
         "No Formal Qualification": 3,
         "Post Graduate Qualification": 4
     }
+
 
     imd_map = {
         "0-10%": 0,
@@ -454,10 +458,12 @@ elif page == "📊 Performance Prediction":
         "Missing / Unknown": 10
     }
 
+
     disability_map = {
         "No": 0,
         "Yes": 1
     }
+
 
     # ========================================================
     # SECTION 1 - PERSONAL INFORMATION
@@ -466,6 +472,11 @@ elif page == "📊 Performance Prediction":
     st.subheader("👤 1. Student Information")
 
     col1, col2, col3 = st.columns(3)
+
+
+    # --------------------------------------------------------
+    # COLUMN 1
+    # --------------------------------------------------------
 
     with col1:
 
@@ -478,13 +489,21 @@ elif page == "📊 Performance Prediction":
             horizontal=True
         )
 
-        gender = gender_map[gender_label]
+        gender = gender_map[
+            gender_label
+        ]
+
 
         age = st.selectbox(
             "Age",
             options=list(range(18, 71)),
             index=2
         )
+
+
+        # ----------------------------------------------------
+        # Convert actual age to OULAD age band
+        # ----------------------------------------------------
 
         if age < 35:
 
@@ -498,32 +517,56 @@ elif page == "📊 Performance Prediction":
 
             age_band = 2
 
+
+    # --------------------------------------------------------
+    # COLUMN 2
+    # --------------------------------------------------------
+
     with col2:
 
         region_label = st.selectbox(
             "Region",
-            options=list(region_map.keys())
+            options=list(
+                region_map.keys()
+            )
         )
 
-        region = region_map[region_label]
+        region = region_map[
+            region_label
+        ]
+
 
         education_label = st.selectbox(
             "Highest Education",
-            options=list(education_map.keys())
+            options=list(
+                education_map.keys()
+            )
         )
 
-        highest_education = education_map[
-            education_label
-        ]
+        highest_education = (
+            education_map[
+                education_label
+            ]
+        )
+
+
+    # --------------------------------------------------------
+    # COLUMN 3
+    # --------------------------------------------------------
 
     with col3:
 
         imd_label = st.selectbox(
             "IMD Band",
-            options=list(imd_map.keys())
+            options=list(
+                imd_map.keys()
+            )
         )
 
-        imd_band = imd_map[imd_label]
+        imd_band = imd_map[
+            imd_label
+        ]
+
 
         disability_label = st.radio(
             "Disability",
@@ -538,11 +581,14 @@ elif page == "📊 Performance Prediction":
             disability_label
         ]
 
+
     # ========================================================
     # AGE INFORMATION
     # ========================================================
 
-    with st.expander("ℹ️ About Age Band"):
+    with st.expander(
+        "ℹ️ About Age Band"
+    ):
 
         if age < 35:
 
@@ -556,6 +602,7 @@ elif page == "📊 Performance Prediction":
 
             age_band_text = "55+"
 
+
         st.write(
             f"Selected Age: **{age} years**"
         )
@@ -565,19 +612,25 @@ elif page == "📊 Performance Prediction":
         )
 
         st.caption(
-            "The system automatically converts the selected age "
-            "into the age-band representation used by the model."
+            "The system automatically converts the selected "
+            "age into the age-band representation used by "
+            "the trained model."
         )
 
+
     st.markdown("---")
+
 
     # ========================================================
     # SECTION 2 - ACADEMIC INFORMATION
     # ========================================================
 
-    st.subheader("📚 2. Academic Information")
+    st.subheader(
+        "📚 2. Academic Information"
+    )
 
     col1, col2, col3 = st.columns(3)
+
 
     with col1:
 
@@ -589,6 +642,7 @@ elif page == "📊 Performance Prediction":
             help="Number of previous attempts made by the student."
         )
 
+
         studied_credits = st.number_input(
             "Studied Credits",
             min_value=0.0,
@@ -596,6 +650,7 @@ elif page == "📊 Performance Prediction":
             step=10.0,
             help="Number of credits studied by the student."
         )
+
 
     with col2:
 
@@ -607,6 +662,7 @@ elif page == "📊 Performance Prediction":
             help="Total number of assessments."
         )
 
+
         average_score = st.number_input(
             "Average Score",
             min_value=0.0,
@@ -615,6 +671,7 @@ elif page == "📊 Performance Prediction":
             step=1.0,
             help="Average assessment score."
         )
+
 
     with col3:
 
@@ -626,6 +683,7 @@ elif page == "📊 Performance Prediction":
             step=1.0
         )
 
+
         lowest_score = st.number_input(
             "Lowest Score",
             min_value=0.0,
@@ -634,15 +692,24 @@ elif page == "📊 Performance Prediction":
             step=1.0
         )
 
+
     st.markdown("---")
+
 
     # ========================================================
     # SECTION 3 - LEARNING ACTIVITY
     # ========================================================
 
-    st.subheader("📈 3. Learning Activity")
+    st.subheader(
+        "📈 3. Learning Activity"
+    )
 
     col1, col2, col3 = st.columns(3)
+
+
+    # --------------------------------------------------------
+    # COLUMN 1
+    # --------------------------------------------------------
 
     with col1:
 
@@ -654,12 +721,18 @@ elif page == "📊 Performance Prediction":
             help="Total number of interactions/clicks."
         )
 
+
         average_clicks = st.number_input(
             "Average Clicks",
             min_value=0.0,
             value=10.0,
             step=1.0
         )
+
+
+    # --------------------------------------------------------
+    # COLUMN 2
+    # --------------------------------------------------------
 
     with col2:
 
@@ -670,12 +743,18 @@ elif page == "📊 Performance Prediction":
             step=1.0
         )
 
+
         resources_accessed = st.number_input(
             "Resources Accessed",
             min_value=0.0,
             value=5.0,
             step=1.0
         )
+
+
+    # --------------------------------------------------------
+    # COLUMN 3
+    # --------------------------------------------------------
 
     with col3:
 
@@ -686,29 +765,78 @@ elif page == "📊 Performance Prediction":
             step=1.0
         )
 
+
         registration_day = st.number_input(
             "Registration Day",
             min_value=0.0,
             value=0.0,
-            step=1.0
+            step=1.0,
+            help="Day on which the student registered."
         )
+
+
+        # ====================================================
+        # NEW FEATURE
+        # ====================================================
+
+        unregistration_day = st.number_input(
+            "Unregistration Day",
+            min_value=0.0,
+            value=0.0,
+            step=1.0,
+            help=(
+                "Day on which the student unsubscribed. "
+                "Use 0 if the student has not unsubscribed."
+            )
+        )
+
 
         course_duration = st.number_input(
             "Course Duration",
             min_value=0.0,
             value=240.0,
-            step=1.0
+            step=1.0,
+            help="Duration of the course in days."
         )
 
+
+    # ========================================================
+    # FEATURE INFORMATION
+    # ========================================================
+
+    with st.expander(
+        "ℹ️ About Registration & Unregistration"
+    ):
+
+        st.write(
+            f"**Registration Day:** "
+            f"{registration_day}"
+        )
+
+        st.write(
+            f"**Unregistration Day:** "
+            f"{unregistration_day}"
+        )
+
+        st.caption(
+            "If the student is currently enrolled and has "
+            "not withdrawn, use 0 for Unregistration Day."
+        )
+
+
     st.markdown("---")
+
 
     # ========================================================
     # INPUT SUMMARY
     # ========================================================
 
-    with st.expander("🔎 Review Student Information"):
+    with st.expander(
+        "🔎 Review Student Information"
+    ):
 
         summary_col1, summary_col2 = st.columns(2)
+
 
         with summary_col1:
 
@@ -732,39 +860,67 @@ elif page == "📊 Performance Prediction":
                 f"**IMD Band:** {imd_label}"
             )
 
+            st.write(
+                f"**Disability:** {disability_label}"
+            )
+
+
         with summary_col2:
 
             st.write(
-                f"**Previous Attempts:** {num_of_prev_attempts}"
+                f"**Previous Attempts:** "
+                f"{num_of_prev_attempts}"
             )
 
             st.write(
-                f"**Studied Credits:** {studied_credits}"
+                f"**Studied Credits:** "
+                f"{studied_credits}"
             )
 
             st.write(
-                f"**Average Score:** {average_score}"
+                f"**Average Score:** "
+                f"{average_score}"
             )
 
             st.write(
-                f"**Active Days:** {active_days}"
+                f"**Active Days:** "
+                f"{active_days}"
             )
 
             st.write(
-                f"**Course Duration:** {course_duration}"
+                f"**Registration Day:** "
+                f"{registration_day}"
             )
+
+            st.write(
+                f"**Unregistration Day:** "
+                f"{unregistration_day}"
+            )
+
+            st.write(
+                f"**Course Duration:** "
+                f"{course_duration}"
+            )
+
 
     # ========================================================
     # PREDICTION
     # ========================================================
 
-    st.markdown("### 🎯 Generate Prediction")
+    st.markdown(
+        "### 🎯 Generate Prediction"
+    )
+
 
     if st.button(
         "🔍 Predict Student Performance",
         type="primary",
         use_container_width=True
     ):
+
+        # ====================================================
+        # 20 MODEL FEATURES
+        # ====================================================
 
         input_data = pd.DataFrame(
             [[
@@ -786,6 +942,7 @@ elif page == "📊 Performance Prediction":
                 resources_accessed,
                 active_days,
                 registration_day,
+                unregistration_day,
                 course_duration
             ]],
             columns=[
@@ -807,9 +964,11 @@ elif page == "📊 Performance Prediction":
                 "resources_accessed",
                 "active_days",
                 "registration_day",
+                "unregistration_day",
                 "course_duration"
             ]
         )
+
 
         try:
 
@@ -817,15 +976,21 @@ elif page == "📊 Performance Prediction":
                 input_data
             )
 
+
             result = encoder.inverse_transform(
                 prediction.astype(int)
             )[0]
 
+
             st.session_state.prediction = result
+
 
             st.markdown("---")
 
-            st.subheader("🎯 Prediction Result")
+            st.subheader(
+                "🎯 Prediction Result"
+            )
+
 
             st.markdown(
                 f"""
@@ -844,6 +1009,11 @@ elif page == "📊 Performance Prediction":
                 unsafe_allow_html=True
             )
 
+
+            # =================================================
+            # FAIL
+            # =================================================
+
             if result == "Fail":
 
                 st.warning(
@@ -851,9 +1021,14 @@ elif page == "📊 Performance Prediction":
                     "student may require additional learning support."
                 )
 
-                st.subheader("💡 Recommended Actions")
+
+                st.subheader(
+                    "💡 Recommended Actions"
+                )
+
 
                 action_col1, action_col2 = st.columns(2)
+
 
                 with action_col1:
 
@@ -865,6 +1040,7 @@ elif page == "📊 Performance Prediction":
                         """
                     )
 
+
                 with action_col2:
 
                     st.markdown(
@@ -875,13 +1051,22 @@ elif page == "📊 Performance Prediction":
                         """
                     )
 
+
+            # =================================================
+            # PASS
+            # =================================================
+
             elif result == "Pass":
 
                 st.success(
                     "✅ The student is progressing satisfactorily."
                 )
 
-                st.subheader("💡 Recommended Actions")
+
+                st.subheader(
+                    "💡 Recommended Actions"
+                )
+
 
                 st.markdown(
                     """
@@ -892,6 +1077,11 @@ elif page == "📊 Performance Prediction":
                     """
                 )
 
+
+            # =================================================
+            # DISTINCTION
+            # =================================================
+
             elif result == "Distinction":
 
                 st.success(
@@ -899,7 +1089,11 @@ elif page == "📊 Performance Prediction":
                     "Advanced learning resources are recommended."
                 )
 
-                st.subheader("💡 Recommended Actions")
+
+                st.subheader(
+                    "💡 Recommended Actions"
+                )
+
 
                 st.markdown(
                     """
@@ -910,13 +1104,22 @@ elif page == "📊 Performance Prediction":
                     """
                 )
 
+
+            # =================================================
+            # WITHDRAWN
+            # =================================================
+
             elif result == "Withdrawn":
 
                 st.warning(
                     "⚠️ The student may be at risk of disengagement."
                 )
 
-                st.subheader("💡 Recommended Actions")
+
+                st.subheader(
+                    "💡 Recommended Actions"
+                )
+
 
                 st.markdown(
                     """
@@ -926,6 +1129,7 @@ elif page == "📊 Performance Prediction":
                     - 📊 Monitor learning activity regularly
                     """
                 )
+
 
         except Exception as e:
 
@@ -940,7 +1144,10 @@ elif page == "📊 Performance Prediction":
 
 elif page == "📚 Course Recommendations":
 
-    st.header("📚 Personalized Course Recommendations")
+    st.header(
+        "📚 Personalized Course Recommendations"
+    )
+
 
     st.write(
         """
@@ -949,13 +1156,18 @@ elif page == "📚 Course Recommendations":
         """
     )
 
-    recommendation_file = BASE_DIR / "recommendations.csv"
+
+    recommendation_file = (
+        BASE_DIR / "recommendations.csv"
+    )
+
 
     if recommendation_file.exists():
 
         recommendations = pd.read_csv(
             recommendation_file
         )
+
 
         if "Similarity" in recommendations.columns:
 
@@ -964,11 +1176,16 @@ elif page == "📚 Course Recommendations":
                 .round(3)
             )
 
+
         st.success(
             f"✓ {len(recommendations)} recommendation(s) available."
         )
 
-        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        metric_col1, metric_col2, metric_col3 = (
+            st.columns(3)
+        )
+
 
         with metric_col1:
 
@@ -977,14 +1194,17 @@ elif page == "📚 Course Recommendations":
                 len(recommendations)
             )
 
+
         with metric_col2:
 
             if "difficulty" in recommendations.columns:
 
                 difficulty_count = (
-                    recommendations["difficulty"]
-                    .nunique()
+                    recommendations[
+                        "difficulty"
+                    ].nunique()
                 )
+
 
                 st.metric(
                     "Difficulty Levels",
@@ -998,14 +1218,17 @@ elif page == "📚 Course Recommendations":
                     "Available"
                 )
 
+
         with metric_col3:
 
             if "Similarity" in recommendations.columns:
 
                 avg_similarity = (
-                    recommendations["Similarity"]
-                    .mean()
+                    recommendations[
+                        "Similarity"
+                    ].mean()
                 )
+
 
                 st.metric(
                     "Avg. Similarity",
@@ -1019,9 +1242,14 @@ elif page == "📚 Course Recommendations":
                     "Active"
                 )
 
+
         st.markdown("---")
 
-        st.subheader("📋 Recommended Learning Resources")
+
+        st.subheader(
+            "📋 Recommended Learning Resources"
+        )
+
 
         st.dataframe(
             recommendations,
@@ -1029,20 +1257,25 @@ elif page == "📚 Course Recommendations":
             hide_index=True
         )
 
+
         st.download_button(
             label="⬇️ Download Recommendations",
             data=recommendations.to_csv(
                 index=False
             ),
-            file_name="personalized_recommendations.csv",
+            file_name=(
+                "personalized_recommendations.csv"
+            ),
             mime="text/csv"
         )
+
 
     else:
 
         st.warning(
             "recommendations.csv was not found."
         )
+
 
         st.info(
             """
@@ -1063,7 +1296,10 @@ elif page == "📚 Course Recommendations":
 
 elif page == "🧠 Adaptive Learning":
 
-    st.header("🧠 Adaptive Learning Plan")
+    st.header(
+        "🧠 Adaptive Learning Plan"
+    )
+
 
     st.write(
         """
@@ -1072,7 +1308,11 @@ elif page == "🧠 Adaptive Learning":
         """
     )
 
-    adaptive_file = BASE_DIR / "adaptive_plan.csv"
+
+    adaptive_file = (
+        BASE_DIR / "adaptive_plan.csv"
+    )
+
 
     if adaptive_file.exists():
 
@@ -1080,11 +1320,14 @@ elif page == "🧠 Adaptive Learning":
             adaptive_file
         )
 
+
         st.success(
             "✓ Adaptive learning plan loaded successfully."
         )
 
+
         col1, col2, col3 = st.columns(3)
+
 
         with col1:
 
@@ -1093,14 +1336,17 @@ elif page == "🧠 Adaptive Learning":
                 len(adaptive_plan)
             )
 
+
         with col2:
 
             if "Learning Level" in adaptive_plan.columns:
 
                 levels = (
-                    adaptive_plan["Learning Level"]
-                    .nunique()
+                    adaptive_plan[
+                        "Learning Level"
+                    ].nunique()
                 )
+
 
                 st.metric(
                     "Learning Levels",
@@ -1113,6 +1359,7 @@ elif page == "🧠 Adaptive Learning":
                     "Learning Plan",
                     "Ready"
                 )
+
 
         with col3:
 
@@ -1130,9 +1377,14 @@ elif page == "🧠 Adaptive Learning":
                     "Active"
                 )
 
+
         st.markdown("---")
 
-        st.subheader("📋 Adaptive Learning Resources")
+
+        st.subheader(
+            "📋 Adaptive Learning Resources"
+        )
+
 
         st.dataframe(
             adaptive_plan,
@@ -1140,20 +1392,25 @@ elif page == "🧠 Adaptive Learning":
             hide_index=True
         )
 
+
         st.download_button(
             label="⬇️ Download Adaptive Learning Plan",
             data=adaptive_plan.to_csv(
                 index=False
             ),
-            file_name="adaptive_learning_plan.csv",
+            file_name=(
+                "adaptive_learning_plan.csv"
+            ),
             mime="text/csv"
         )
+
 
     else:
 
         st.warning(
             "adaptive_plan.csv was not found."
         )
+
 
         st.info(
             """
@@ -1173,7 +1430,10 @@ elif page == "🧠 Adaptive Learning":
 
 elif page == "📅 Study Schedule":
 
-    st.header("📅 Personalized Study Schedule")
+    st.header(
+        "📅 Personalized Study Schedule"
+    )
+
 
     st.write(
         """
@@ -1183,26 +1443,36 @@ elif page == "📅 Study Schedule":
         """
     )
 
-    adaptive_file = BASE_DIR / "adaptive_plan.csv"
+
+    adaptive_file = (
+        BASE_DIR / "adaptive_plan.csv"
+    )
+
 
     if not adaptive_file.exists():
 
         st.warning(
             "adaptive_plan.csv was not found. "
-            "Please generate/export the Phase 4 adaptive learning plan first."
+            "Please generate/export the Phase 4 adaptive "
+            "learning plan first."
         )
 
         st.stop()
+
 
     adaptive_plan = pd.read_csv(
         adaptive_file
     )
 
+
     # ========================================================
     # STEP 1
     # ========================================================
 
-    st.subheader("1️⃣ Select Available Study Days")
+    st.subheader(
+        "1️⃣ Select Available Study Days"
+    )
+
 
     days = [
         "Monday",
@@ -1214,6 +1484,7 @@ elif page == "📅 Study Schedule":
         "Sunday"
     ]
 
+
     selected_days = st.multiselect(
         "Choose the days you are available:",
         options=days,
@@ -1224,13 +1495,18 @@ elif page == "📅 Study Schedule":
         ]
     )
 
+
     # ========================================================
     # STEP 2
     # ========================================================
 
-    st.subheader("2️⃣ Select Available Study Time")
+    st.subheader(
+        "2️⃣ Select Available Study Time"
+    )
+
 
     col1, col2 = st.columns(2)
+
 
     with col1:
 
@@ -1241,6 +1517,7 @@ elif page == "📅 Study Schedule":
             ).time()
         )
 
+
     with col2:
 
         study_end_time = st.time_input(
@@ -1250,15 +1527,22 @@ elif page == "📅 Study Schedule":
             ).time()
         )
 
+
     # ========================================================
     # STEP 3
     # ========================================================
 
     if selected_days:
 
-        st.subheader("3️⃣ Your Availability")
+        st.subheader(
+            "3️⃣ Your Availability"
+        )
 
-        availability_col1, availability_col2 = st.columns(2)
+
+        availability_col1, availability_col2 = (
+            st.columns(2)
+        )
+
 
         with availability_col1:
 
@@ -1266,6 +1550,7 @@ elif page == "📅 Study Schedule":
                 f"📅 **Days:** "
                 f"{', '.join(selected_days)}"
             )
+
 
         with availability_col2:
 
@@ -1275,11 +1560,15 @@ elif page == "📅 Study Schedule":
                 f"{study_end_time.strftime('%I:%M %p')}"
             )
 
+
     # ========================================================
     # STEP 4
     # ========================================================
 
-    st.subheader("4️⃣ Generate Schedule")
+    st.subheader(
+        "4️⃣ Generate Schedule"
+    )
+
 
     if st.button(
         "📅 Generate Personalized Schedule",
@@ -1293,11 +1582,13 @@ elif page == "📅 Study Schedule":
                 "Please select at least one study day."
             )
 
+
         elif study_start_time >= study_end_time:
 
             st.error(
                 "Study end time must be later than study start time."
             )
+
 
         else:
 
@@ -1306,34 +1597,43 @@ elif page == "📅 Study Schedule":
                 + study_start_time.minute / 60
             )
 
+
             end_hour = (
                 study_end_time.hour
                 + study_end_time.minute / 60
             )
 
+
             start_slot = int(
                 start_hour * 4
             )
+
 
             end_slot = int(
                 end_hour * 4
             )
 
+
             try:
 
                 schedule_rows = []
+
 
                 available_minutes_per_day = (
                     end_hour - start_hour
                 ) * 60
 
+
                 day_index = 0
+
 
                 current_day = selected_days[
                     day_index
                 ]
 
+
                 current_slot = start_slot
+
 
                 for _, row in adaptive_plan.iterrows():
 
@@ -1341,6 +1641,7 @@ elif page == "📅 Study Schedule":
                         "Estimated Time",
                         30
                     )
+
 
                     try:
 
@@ -1352,6 +1653,7 @@ elif page == "📅 Study Schedule":
 
                         estimated_time = 30
 
+
                     required_slots = max(
                         1,
                         int(
@@ -1361,9 +1663,11 @@ elif page == "📅 Study Schedule":
                         )
                     )
 
+
                     duration_minutes = (
                         required_slots * 15
                     )
+
 
                     if (
                         current_slot
@@ -1373,21 +1677,26 @@ elif page == "📅 Study Schedule":
 
                         day_index += 1
 
+
                         if day_index >= len(
                             selected_days
                         ):
 
                             day_index = 0
 
+
                         current_day = selected_days[
                             day_index
                         ]
 
+
                         current_slot = start_slot
+
 
                     start_minutes = (
                         current_slot * 15
                     )
+
 
                     end_minutes = (
                         (
@@ -1397,31 +1706,38 @@ elif page == "📅 Study Schedule":
                         * 15
                     )
 
+
                     start_h = (
                         start_minutes // 60
                     )
+
 
                     start_m = (
                         start_minutes % 60
                     )
 
+
                     end_h = (
                         end_minutes // 60
                     )
 
+
                     end_m = (
                         end_minutes % 60
                     )
+
 
                     start_time = (
                         f"{int(start_h):02d}:"
                         f"{int(start_m):02d}"
                     )
 
+
                     end_time = (
                         f"{int(end_h):02d}:"
                         f"{int(end_m):02d}"
                     )
+
 
                     schedule_rows.append(
                         {
@@ -1448,25 +1764,31 @@ elif page == "📅 Study Schedule":
                         }
                     )
 
+
                     current_slot += (
                         required_slots
                     )
+
 
                 generated_schedule = pd.DataFrame(
                     schedule_rows
                 )
 
+
                 st.session_state.generated_schedule = (
                     generated_schedule
                 )
+
 
                 st.success(
                     "✓ Personalized study schedule generated!"
                 )
 
+
                 st.subheader(
                     "📋 Your Personalized Schedule"
                 )
+
 
                 st.dataframe(
                     generated_schedule,
@@ -1474,20 +1796,25 @@ elif page == "📅 Study Schedule":
                     hide_index=True
                 )
 
+
                 st.download_button(
                     label="⬇️ Download Study Schedule",
                     data=generated_schedule.to_csv(
                         index=False
                     ),
-                    file_name="personalized_study_schedule.csv",
+                    file_name=(
+                        "personalized_study_schedule.csv"
+                    ),
                     mime="text/csv"
                 )
+
 
             except Exception as e:
 
                 st.error(
                     f"Schedule generation error: {str(e)}"
                 )
+
 
     # ========================================================
     # PREVIOUSLY GENERATED SCHEDULE
@@ -1500,9 +1827,11 @@ elif page == "📅 Study Schedule":
 
         st.markdown("---")
 
+
         st.subheader(
             "📋 Current Study Schedule"
         )
+
 
         st.dataframe(
             st.session_state.generated_schedule,
@@ -1517,7 +1846,10 @@ elif page == "📅 Study Schedule":
 
 elif page == "🤖 AI Tutor":
 
-    st.header("🤖 AI Tutor")
+    st.header(
+        "🤖 AI Tutor"
+    )
+
 
     st.write(
         """
@@ -1525,6 +1857,7 @@ elif page == "🤖 AI Tutor":
         deep learning and artificial intelligence topics.
         """
     )
+
 
     st.info(
         """
@@ -1540,11 +1873,15 @@ elif page == "🤖 AI Tutor":
         """
     )
 
+
     question = st.text_area(
         "💬 Enter your question",
-        placeholder="Example: Explain CNN in simple terms.",
+        placeholder=(
+            "Example: Explain CNN in simple terms."
+        ),
         height=150
     )
+
 
     if st.button(
         "🤖 Ask AI Tutor",
@@ -1557,9 +1894,13 @@ elif page == "🤖 AI Tutor":
                 "Please enter a question."
             )
 
+
         else:
 
-            question_lower = question.lower()
+            question_lower = (
+                question.lower()
+            )
+
 
             if "cnn" in question_lower:
 
@@ -1577,6 +1918,7 @@ Main components:
 4. Output layer
 """
 
+
             elif "lstm" in question_lower:
 
                 response = """
@@ -1593,6 +1935,7 @@ LSTM is commonly used for:
 - Sentiment analysis
 """
 
+
             elif "machine learning" in question_lower:
 
                 response = """
@@ -1601,6 +1944,7 @@ Intelligence where systems learn patterns from
 data and use those patterns to make predictions
 or decisions.
 """
+
 
             else:
 
@@ -1613,15 +1957,19 @@ CNN, LSTM, Machine Learning, Deep Learning,
 classification, or neural networks.
 """
 
+
             st.markdown("---")
+
 
             st.subheader(
                 "💡 AI Tutor Response"
             )
 
+
             st.success(
                 "Your question has been processed."
             )
+
 
             st.write(
                 response
@@ -1634,7 +1982,10 @@ classification, or neural networks.
 
 elif page == "⭐ Feedback":
 
-    st.header("⭐ Student Feedback")
+    st.header(
+        "⭐ Student Feedback"
+    )
+
 
     st.write(
         """
@@ -1643,7 +1994,11 @@ elif page == "⭐ Feedback":
         """
     )
 
-    col1, col2 = st.columns([1, 2])
+
+    col1, col2 = st.columns(
+        [1, 2]
+    )
+
 
     with col1:
 
@@ -1654,33 +2009,48 @@ elif page == "⭐ Feedback":
             value=5
         )
 
+
     with col2:
 
         st.write(
             f"### Your Rating: {rating} / 5"
         )
 
+
         if rating == 5:
 
-            st.write("Excellent! 🎉")
+            st.write(
+                "Excellent! 🎉"
+            )
+
 
         elif rating == 4:
 
-            st.write("Very Good! 👍")
+            st.write(
+                "Very Good! 👍"
+            )
+
 
         elif rating == 3:
 
-            st.write("Good. 🙂")
+            st.write(
+                "Good. 🙂"
+            )
+
 
         elif rating == 2:
 
-            st.write("Needs Improvement. 📝")
+            st.write(
+                "Needs Improvement. 📝"
+            )
+
 
         else:
 
             st.write(
                 "We appreciate your feedback. 🙏"
             )
+
 
     feedback = st.text_area(
         "📝 Enter your feedback",
@@ -1690,6 +2060,7 @@ elif page == "⭐ Feedback":
         ),
         height=150
     )
+
 
     if st.button(
         "⭐ Submit Feedback",
@@ -1703,13 +2074,16 @@ elif page == "⭐ Feedback":
                 st.session_state.prediction
         }
 
+
         st.session_state.feedback.append(
             feedback_record
         )
 
+
         st.success(
             "✓ Thank you! Your feedback has been recorded."
         )
+
 
     if len(
         st.session_state.feedback
@@ -1717,13 +2091,16 @@ elif page == "⭐ Feedback":
 
         st.markdown("---")
 
+
         st.subheader(
             "📋 Feedback Records"
         )
 
+
         feedback_df = pd.DataFrame(
             st.session_state.feedback
         )
+
 
         st.dataframe(
             feedback_df,
@@ -1737,6 +2114,7 @@ elif page == "⭐ Feedback":
 # ============================================================
 
 st.markdown("---")
+
 
 st.markdown(
     """
