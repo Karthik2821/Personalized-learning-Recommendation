@@ -1,15 +1,13 @@
-
 # ============================================================
 # PHASE 8 - DEPLOYMENT
 # PERSONALIZED LEARNING RECOMMENDATION SYSTEM
-# Streamlit Dashboard + Prediction API
+# Streamlit Dashboard
 # ============================================================
 
 import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-import json
 from pathlib import Path
 
 
@@ -20,12 +18,82 @@ from pathlib import Path
 st.set_page_config(
     page_title="Personalized Learning System",
     page_icon="🎓",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 
 # ============================================================
-# LOAD TRAINED MODEL
+# CUSTOM CSS - UI ONLY
+# ============================================================
+
+st.markdown(
+    """
+    <style>
+
+    .main {
+        padding-top: 1rem;
+    }
+
+    section[data-testid="stSidebar"] {
+        padding-top: 1rem;
+    }
+
+    .main-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+
+    .subtitle {
+        font-size: 1.05rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+        padding: 1.2rem;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        background-color: #fafafa;
+        margin-bottom: 1rem;
+    }
+
+    .prediction-card {
+        padding: 1.5rem;
+        border-radius: 14px;
+        border: 1px solid #ddd;
+        background-color: #fafafa;
+        text-align: center;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .prediction-label {
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .prediction-value {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .footer {
+        text-align: center;
+        color: #777;
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# PATH CONFIGURATION
 # ============================================================
 
 BASE_DIR = Path(__file__).parent
@@ -33,6 +101,10 @@ BASE_DIR = Path(__file__).parent
 MODEL_PATH = BASE_DIR / "ml_model.pkl"
 ENCODER_PATH = BASE_DIR / "encoder.pkl"
 
+
+# ============================================================
+# LOAD TRAINED MODEL
+# ============================================================
 
 @st.cache_resource
 def load_models():
@@ -43,7 +115,21 @@ def load_models():
     return model, encoder
 
 
-ml_model, encoder = load_models()
+try:
+
+    ml_model, encoder = load_models()
+
+    model_loaded = True
+
+except Exception as e:
+
+    ml_model = None
+    encoder = None
+    model_loaded = False
+
+    st.error(
+        f"Unable to load the trained model: {str(e)}"
+    )
 
 
 # ============================================================
@@ -51,52 +137,92 @@ ml_model, encoder = load_models()
 # ============================================================
 
 if "prediction" not in st.session_state:
+
     st.session_state.prediction = None
 
+
 if "feedback" not in st.session_state:
+
     st.session_state.feedback = []
 
 
-# ============================================================
-# HEADER
-# ============================================================
+if "generated_schedule" not in st.session_state:
 
-st.title("🎓 Personalized Learning Recommendation System")
-
-st.markdown(
-    """
-    ### AI-Powered Personalized Learning Dashboard
-
-    This system combines:
-
-    - 📊 Student Performance Prediction
-    - 📚 Content-Based Course Recommendation
-    - 🧠 Adaptive Learning
-    - 📅 Constraint-Based Scheduling
-    - 🤖 AI Tutor
-    - ⭐ Student Feedback
-    """
-)
+    st.session_state.generated_schedule = None
 
 
 # ============================================================
 # SIDEBAR
 # ============================================================
 
-st.sidebar.title("Navigation")
+with st.sidebar:
 
-page = st.sidebar.radio(
-    "Select Module",
-    [
-        "Dashboard",
-        "Performance Prediction",
-        "Course Recommendations",
-        "Adaptive Learning",
-        "Study Schedule",
-        "AI Tutor",
-        "Feedback",
-        "API"
-    ]
+    st.markdown(
+        """
+        <div style="text-align:center;">
+
+        <h1>🎓</h1>
+
+        <h2>Personalized Learning</h2>
+
+        <p>AI-Powered Learning Dashboard</p>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.subheader("📌 Navigation")
+
+    page = st.radio(
+        "Choose a module",
+        [
+            "🏠 Dashboard",
+            "📊 Performance Prediction",
+            "📚 Course Recommendations",
+            "🧠 Adaptive Learning",
+            "📅 Study Schedule",
+            "🤖 AI Tutor",
+            "⭐ Feedback"
+        ],
+        label_visibility="collapsed"
+    )
+
+    st.markdown("---")
+
+    st.subheader("System Status")
+
+    if model_loaded:
+
+        st.success("🟢 ML Model Loaded")
+
+    else:
+
+        st.error("🔴 ML Model Not Loaded")
+
+    st.caption(
+        "Personalized Learning Recommendation System"
+    )
+
+    st.caption(
+        "M.Tech Project"
+    )
+
+
+# ============================================================
+# MAIN HEADER
+# ============================================================
+
+st.markdown(
+    '<div class="main-title">🎓 Personalized Learning Recommendation System</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="subtitle">AI-powered platform for personalized student learning, performance prediction, recommendations and scheduling.</div>',
+    unsafe_allow_html=True
 )
 
 
@@ -104,25 +230,54 @@ page = st.sidebar.radio(
 # DASHBOARD
 # ============================================================
 
-if page == "Dashboard":
+if page == "🏠 Dashboard":
 
-    st.header("📊 Student Dashboard")
+    st.header("🏠 Student Learning Dashboard")
 
-    col1, col2, col3 = st.columns(3)
+    st.write(
+        """
+        Welcome to the Personalized Learning Recommendation System.
+        This platform analyzes student information and provides
+        personalized learning support.
+        """
+    )
+
+    st.markdown("### 📌 System Overview")
+
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
+
         st.metric(
-            "System",
+            "System Status",
             "Active"
         )
 
     with col2:
-        st.metric(
-            "ML Model",
-            "Loaded"
-        )
+
+        if model_loaded:
+
+            st.metric(
+                "ML Model",
+                "Ready"
+            )
+
+        else:
+
+            st.metric(
+                "ML Model",
+                "Error"
+            )
 
     with col3:
+
+        st.metric(
+            "Course Engine",
+            "Available"
+        )
+
+    with col4:
+
         st.metric(
             "AI Tutor",
             "Available"
@@ -130,50 +285,137 @@ if page == "Dashboard":
 
     st.markdown("---")
 
-    st.subheader("System Workflow")
+    st.subheader("🔄 System Workflow")
 
-    st.info(
-        """
-        Student Profile
-        ↓
-        Performance Prediction
-        ↓
-        Course Recommendation
-        ↓
-        Adaptive Learning
-        ↓
-        Study Scheduling
-        ↓
-        AI Tutor
-        ↓
-        Feedback
-        """
-    )
+    workflow_col1, workflow_col2 = st.columns(2)
+
+    with workflow_col1:
+
+        st.markdown(
+            """
+            ### 1️⃣ Student Profile
+
+            Student academic and learning information
+            is provided.
+
+            ### 2️⃣ Performance Prediction
+
+            The trained machine learning model predicts
+            the student's expected academic outcome.
+
+            ### 3️⃣ Course Recommendation
+
+            Relevant learning resources are recommended
+            using the content-based recommendation engine.
+
+            ### 4️⃣ Adaptive Learning
+
+            Learning resources are organized according
+            to the student's learning requirements.
+            """
+        )
+
+    with workflow_col2:
+
+        st.markdown(
+            """
+            ### 5️⃣ Study Scheduling
+
+            A constraint-based scheduling algorithm creates
+            a personalized study timetable.
+
+            ### 6️⃣ AI Tutor
+
+            Students can ask questions about important
+            learning topics.
+
+            ### 7️⃣ Feedback
+
+            Students can provide ratings and feedback
+            about the system.
+
+            ### 🎯 Goal
+
+            Provide a personalized, adaptive and
+            student-friendly learning experience.
+            """
+        )
+
+    st.markdown("---")
+
+    st.subheader("🚀 Quick Start")
+
+    quick1, quick2, quick3 = st.columns(3)
+
+    with quick1:
+
+        st.info(
+            """
+            **📊 Predict Performance**
+
+            Enter student information and obtain
+            the predicted academic outcome.
+            """
+        )
+
+    with quick2:
+
+        st.info(
+            """
+            **📚 Explore Recommendations**
+
+            View personalized learning resources
+            generated by the recommendation engine.
+            """
+        )
+
+    with quick3:
+
+        st.info(
+            """
+            **📅 Create Study Schedule**
+
+            Select your available days and times
+            to generate a personalized timetable.
+            """
+        )
 
 
 # ============================================================
 # PERFORMANCE PREDICTION
 # ============================================================
 
-elif page == "Performance Prediction":
+elif page == "📊 Performance Prediction":
 
     st.header("📊 Student Performance Prediction")
 
     st.write(
-        "Enter the student's academic and learning information."
+        """
+        Enter the student's academic and learning information.
+        The trained machine learning model will predict the
+        student's expected outcome.
+        """
     )
 
-    # --------------------------------------------------------
-    # USER-FRIENDLY CATEGORY MAPPINGS
-    # --------------------------------------------------------
+    if not model_loaded:
 
-    # Gender encoding used by OULAD / LabelEncoder
+        st.error(
+            "The trained model could not be loaded. "
+            "Please verify that ml_model.pkl and encoder.pkl "
+            "are present in the application folder."
+        )
+
+        st.stop()
+
+    # ========================================================
+    # USER-FRIENDLY CATEGORY MAPPINGS
+    # ========================================================
+
     gender_map = {
         "♀ Female": 0,
         "♂ Male": 1
     }
 
-    # Region encoding
     region_map = {
         "East Anglian Region": 0,
         "East Midlands Region": 1,
@@ -190,7 +432,6 @@ elif page == "Performance Prediction":
         "Yorkshire Region": 12
     }
 
-    # Highest education encoding
     education_map = {
         "A Level or Equivalent": 0,
         "HE Qualification": 1,
@@ -199,7 +440,6 @@ elif page == "Performance Prediction":
         "Post Graduate Qualification": 4
     }
 
-    # IMD band encoding
     imd_map = {
         "0-10%": 0,
         "10-20%": 1,
@@ -214,27 +454,20 @@ elif page == "Performance Prediction":
         "Missing / Unknown": 10
     }
 
-    # Disability encoding
     disability_map = {
         "No": 0,
         "Yes": 1
     }
 
-    # --------------------------------------------------------
-    # INPUT FEATURES
-    # --------------------------------------------------------
+    # ========================================================
+    # SECTION 1 - PERSONAL INFORMATION
+    # ========================================================
+
+    st.subheader("👤 1. Student Information")
 
     col1, col2, col3 = st.columns(3)
 
-    # ========================================================
-    # COLUMN 1
-    # ========================================================
-
     with col1:
-
-        # ----------------------------------------------------
-        # GENDER
-        # ----------------------------------------------------
 
         gender_label = st.radio(
             "Gender",
@@ -247,27 +480,25 @@ elif page == "Performance Prediction":
 
         gender = gender_map[gender_label]
 
-        # ----------------------------------------------------
-        # AGE
-        # ----------------------------------------------------
-
         age = st.selectbox(
             "Age",
             options=list(range(18, 71)),
             index=2
         )
 
-        # Convert actual age to OULAD age band
         if age < 35:
+
             age_band = 0
+
         elif age < 55:
+
             age_band = 1
+
         else:
+
             age_band = 2
 
-        # ----------------------------------------------------
-        # REGION
-        # ----------------------------------------------------
+    with col2:
 
         region_label = st.selectbox(
             "Region",
@@ -275,10 +506,6 @@ elif page == "Performance Prediction":
         )
 
         region = region_map[region_label]
-
-        # ----------------------------------------------------
-        # HIGHEST EDUCATION
-        # ----------------------------------------------------
 
         education_label = st.selectbox(
             "Highest Education",
@@ -289,9 +516,7 @@ elif page == "Performance Prediction":
             education_label
         ]
 
-        # ----------------------------------------------------
-        # IMD BAND
-        # ----------------------------------------------------
+    with col3:
 
         imd_label = st.selectbox(
             "IMD Band",
@@ -299,10 +524,6 @@ elif page == "Performance Prediction":
         )
 
         imd_band = imd_map[imd_label]
-
-        # ----------------------------------------------------
-        # DISABILITY
-        # ----------------------------------------------------
 
         disability_label = st.radio(
             "Disability",
@@ -318,30 +539,72 @@ elif page == "Performance Prediction":
         ]
 
     # ========================================================
-    # COLUMN 2
+    # AGE INFORMATION
     # ========================================================
 
-    with col2:
+    with st.expander("ℹ️ About Age Band"):
+
+        if age < 35:
+
+            age_band_text = "0–35"
+
+        elif age < 55:
+
+            age_band_text = "35–55"
+
+        else:
+
+            age_band_text = "55+"
+
+        st.write(
+            f"Selected Age: **{age} years**"
+        )
+
+        st.write(
+            f"Model Age Band: **{age_band_text}**"
+        )
+
+        st.caption(
+            "The system automatically converts the selected age "
+            "into the age-band representation used by the model."
+        )
+
+    st.markdown("---")
+
+    # ========================================================
+    # SECTION 2 - ACADEMIC INFORMATION
+    # ========================================================
+
+    st.subheader("📚 2. Academic Information")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
 
         num_of_prev_attempts = st.number_input(
             "Previous Attempts",
             min_value=0.0,
             value=0.0,
-            step=1.0
+            step=1.0,
+            help="Number of previous attempts made by the student."
         )
 
         studied_credits = st.number_input(
             "Studied Credits",
             min_value=0.0,
             value=60.0,
-            step=10.0
+            step=10.0,
+            help="Number of credits studied by the student."
         )
+
+    with col2:
 
         total_assessments = st.number_input(
             "Total Assessments",
             min_value=0.0,
             value=5.0,
-            step=1.0
+            step=1.0,
+            help="Total number of assessments."
         )
 
         average_score = st.number_input(
@@ -349,8 +612,11 @@ elif page == "Performance Prediction":
             min_value=0.0,
             max_value=100.0,
             value=50.0,
-            step=1.0
+            step=1.0,
+            help="Average assessment score."
         )
+
+    with col3:
 
         highest_score = st.number_input(
             "Highest Score",
@@ -368,17 +634,24 @@ elif page == "Performance Prediction":
             step=1.0
         )
 
+    st.markdown("---")
+
     # ========================================================
-    # COLUMN 3
+    # SECTION 3 - LEARNING ACTIVITY
     # ========================================================
 
-    with col3:
+    st.subheader("📈 3. Learning Activity")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
 
         total_clicks = st.number_input(
             "Total Clicks",
             min_value=0.0,
             value=100.0,
-            step=1.0
+            step=1.0,
+            help="Total number of interactions/clicks."
         )
 
         average_clicks = st.number_input(
@@ -387,6 +660,8 @@ elif page == "Performance Prediction":
             value=10.0,
             step=1.0
         )
+
+    with col2:
 
         max_clicks = st.number_input(
             "Maximum Clicks",
@@ -401,6 +676,8 @@ elif page == "Performance Prediction":
             value=5.0,
             step=1.0
         )
+
+    with col3:
 
         active_days = st.number_input(
             "Active Days",
@@ -423,34 +700,70 @@ elif page == "Performance Prediction":
             step=1.0
         )
 
-    # --------------------------------------------------------
-    # SHOW INTERNAL AGE BAND INFORMATION
-    # --------------------------------------------------------
+    st.markdown("---")
 
-    with st.expander("ℹ️ Age information"):
+    # ========================================================
+    # INPUT SUMMARY
+    # ========================================================
 
-        if age < 35:
-            age_band_text = "0–35"
-        elif age < 55:
-            age_band_text = "35–55"
-        else:
-            age_band_text = "55+"
+    with st.expander("🔎 Review Student Information"):
 
-        st.write(
-            f"Selected Age: **{age} years**"
-        )
+        summary_col1, summary_col2 = st.columns(2)
 
-        st.write(
-            f"Model Age Band: **{age_band_text}**"
-        )
+        with summary_col1:
 
-    # --------------------------------------------------------
+            st.write(
+                f"**Gender:** {gender_label}"
+            )
+
+            st.write(
+                f"**Age:** {age} years"
+            )
+
+            st.write(
+                f"**Region:** {region_label}"
+            )
+
+            st.write(
+                f"**Education:** {education_label}"
+            )
+
+            st.write(
+                f"**IMD Band:** {imd_label}"
+            )
+
+        with summary_col2:
+
+            st.write(
+                f"**Previous Attempts:** {num_of_prev_attempts}"
+            )
+
+            st.write(
+                f"**Studied Credits:** {studied_credits}"
+            )
+
+            st.write(
+                f"**Average Score:** {average_score}"
+            )
+
+            st.write(
+                f"**Active Days:** {active_days}"
+            )
+
+            st.write(
+                f"**Course Duration:** {course_duration}"
+            )
+
+    # ========================================================
     # PREDICTION
-    # --------------------------------------------------------
+    # ========================================================
+
+    st.markdown("### 🎯 Generate Prediction")
 
     if st.button(
         "🔍 Predict Student Performance",
-        type="primary"
+        type="primary",
+        use_container_width=True
     ):
 
         input_data = pd.DataFrame(
@@ -510,46 +823,68 @@ elif page == "Performance Prediction":
 
             st.session_state.prediction = result
 
-            # ------------------------------------------------
-            # DISPLAY RESULT
-            # ------------------------------------------------
+            st.markdown("---")
 
-            st.success(
-                f"Predicted Student Result: **{result}**"
+            st.subheader("🎯 Prediction Result")
+
+            st.markdown(
+                f"""
+                <div class="prediction-card">
+
+                    <div class="prediction-label">
+                        Predicted Student Outcome
+                    </div>
+
+                    <div class="prediction-value">
+                        {result}
+                    </div>
+
+                </div>
+                """,
+                unsafe_allow_html=True
             )
-
-            # ------------------------------------------------
-            # PERFORMANCE INTERPRETATION
-            # ------------------------------------------------
 
             if result == "Fail":
 
                 st.warning(
-                    "The student needs additional learning support."
+                    "⚠️ The prediction indicates that the "
+                    "student may require additional learning support."
                 )
 
-                st.markdown(
-                    """
-                    **Recommended actions:**
+                st.subheader("💡 Recommended Actions")
 
-                    - 📚 Review weak topics
-                    - 📝 Increase practice sessions
-                    - ❓ Take frequent quizzes
-                    - 🤖 Use AI Tutor assistance
-                    - 📅 Follow the personalized study schedule
-                    """
-                )
+                action_col1, action_col2 = st.columns(2)
+
+                with action_col1:
+
+                    st.markdown(
+                        """
+                        - 📚 Review weak topics
+                        - 📝 Increase practice sessions
+                        - ❓ Take frequent quizzes
+                        """
+                    )
+
+                with action_col2:
+
+                    st.markdown(
+                        """
+                        - 🤖 Use AI Tutor assistance
+                        - 📅 Follow the personalized schedule
+                        - 📊 Monitor learning progress
+                        """
+                    )
 
             elif result == "Pass":
 
                 st.success(
-                    "The student is progressing satisfactorily."
+                    "✅ The student is progressing satisfactorily."
                 )
+
+                st.subheader("💡 Recommended Actions")
 
                 st.markdown(
                     """
-                    **Recommended actions:**
-
                     - Continue the current learning plan
                     - Practice regularly
                     - Follow the recommended study schedule
@@ -560,14 +895,14 @@ elif page == "Performance Prediction":
             elif result == "Distinction":
 
                 st.success(
-                    "Excellent performance! Advanced learning "
-                    "resources are recommended."
+                    "🏆 Excellent performance! "
+                    "Advanced learning resources are recommended."
                 )
+
+                st.subheader("💡 Recommended Actions")
 
                 st.markdown(
                     """
-                    **Recommended actions:**
-
                     - 🚀 Explore advanced topics
                     - 📚 Attempt challenging resources
                     - 🧠 Practice advanced problems
@@ -578,13 +913,13 @@ elif page == "Performance Prediction":
             elif result == "Withdrawn":
 
                 st.warning(
-                    "The student may be at risk of disengagement."
+                    "⚠️ The student may be at risk of disengagement."
                 )
+
+                st.subheader("💡 Recommended Actions")
 
                 st.markdown(
                     """
-                    **Recommended actions:**
-
                     - 🤖 Use AI Tutor support
                     - 📅 Follow a manageable study schedule
                     - 📚 Start with easier learning resources
@@ -598,21 +933,21 @@ elif page == "Performance Prediction":
                 f"Prediction error: {str(e)}"
             )
 
+
 # ============================================================
 # COURSE RECOMMENDATIONS
 # ============================================================
 
-elif page == "Course Recommendations":
+elif page == "📚 Course Recommendations":
 
     st.header("📚 Personalized Course Recommendations")
 
-    st.info(
-        "This section displays recommendations generated by Phase 3."
+    st.write(
+        """
+        This section displays the learning resources generated
+        by the Phase 3 Content-Based Recommendation Engine.
+        """
     )
-
-    # --------------------------------------------------------
-    # Load recommendations if available
-    # --------------------------------------------------------
 
     recommendation_file = BASE_DIR / "recommendations.csv"
 
@@ -629,19 +964,90 @@ elif page == "Course Recommendations":
                 .round(3)
             )
 
+        st.success(
+            f"✓ {len(recommendations)} recommendation(s) available."
+        )
+
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        with metric_col1:
+
+            st.metric(
+                "Learning Resources",
+                len(recommendations)
+            )
+
+        with metric_col2:
+
+            if "difficulty" in recommendations.columns:
+
+                difficulty_count = (
+                    recommendations["difficulty"]
+                    .nunique()
+                )
+
+                st.metric(
+                    "Difficulty Levels",
+                    difficulty_count
+                )
+
+            else:
+
+                st.metric(
+                    "Difficulty Levels",
+                    "Available"
+                )
+
+        with metric_col3:
+
+            if "Similarity" in recommendations.columns:
+
+                avg_similarity = (
+                    recommendations["Similarity"]
+                    .mean()
+                )
+
+                st.metric(
+                    "Avg. Similarity",
+                    f"{avg_similarity:.2f}"
+                )
+
+            else:
+
+                st.metric(
+                    "Recommendation Engine",
+                    "Active"
+                )
+
+        st.markdown("---")
+
+        st.subheader("📋 Recommended Learning Resources")
+
         st.dataframe(
             recommendations,
             use_container_width=True,
             hide_index=True
         )
 
+        st.download_button(
+            label="⬇️ Download Recommendations",
+            data=recommendations.to_csv(
+                index=False
+            ),
+            file_name="personalized_recommendations.csv",
+            mime="text/csv"
+        )
+
     else:
 
         st.warning(
-            """
-            recommendations.csv was not found.
+            "recommendations.csv was not found."
+        )
 
-            Export your Phase 3 recommendation DataFrame using:
+        st.info(
+            """
+            Please export the Phase 3 recommendation DataFrame
+            using:
 
             recommendations.to_csv(
                 "recommendations.csv",
@@ -655,9 +1061,16 @@ elif page == "Course Recommendations":
 # ADAPTIVE LEARNING
 # ============================================================
 
-elif page == "Adaptive Learning":
+elif page == "🧠 Adaptive Learning":
 
     st.header("🧠 Adaptive Learning Plan")
+
+    st.write(
+        """
+        The adaptive learning module organizes recommended
+        resources according to the student's learning requirements.
+        """
+    )
 
     adaptive_file = BASE_DIR / "adaptive_plan.csv"
 
@@ -667,19 +1080,84 @@ elif page == "Adaptive Learning":
             adaptive_file
         )
 
+        st.success(
+            "✓ Adaptive learning plan loaded successfully."
+        )
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+
+            st.metric(
+                "Learning Resources",
+                len(adaptive_plan)
+            )
+
+        with col2:
+
+            if "Learning Level" in adaptive_plan.columns:
+
+                levels = (
+                    adaptive_plan["Learning Level"]
+                    .nunique()
+                )
+
+                st.metric(
+                    "Learning Levels",
+                    levels
+                )
+
+            else:
+
+                st.metric(
+                    "Learning Plan",
+                    "Ready"
+                )
+
+        with col3:
+
+            if "Estimated Time" in adaptive_plan.columns:
+
+                st.metric(
+                    "Estimated Time",
+                    "Available"
+                )
+
+            else:
+
+                st.metric(
+                    "Adaptive Engine",
+                    "Active"
+                )
+
+        st.markdown("---")
+
+        st.subheader("📋 Adaptive Learning Resources")
+
         st.dataframe(
             adaptive_plan,
             use_container_width=True,
             hide_index=True
         )
 
+        st.download_button(
+            label="⬇️ Download Adaptive Learning Plan",
+            data=adaptive_plan.to_csv(
+                index=False
+            ),
+            file_name="adaptive_learning_plan.csv",
+            mime="text/csv"
+        )
+
     else:
 
         st.warning(
-            """
-            adaptive_plan.csv was not found.
+            "adaptive_plan.csv was not found."
+        )
 
-            Export the Phase 4 result using:
+        st.info(
+            """
+            Please export the Phase 4 result using:
 
             adaptive_plan.to_csv(
                 "adaptive_plan.csv",
@@ -693,7 +1171,7 @@ elif page == "Adaptive Learning":
 # STUDY SCHEDULE
 # ============================================================
 
-elif page == "Study Schedule":
+elif page == "📅 Study Schedule":
 
     st.header("📅 Personalized Study Schedule")
 
@@ -705,8 +1183,23 @@ elif page == "Study Schedule":
         """
     )
 
+    adaptive_file = BASE_DIR / "adaptive_plan.csv"
+
+    if not adaptive_file.exists():
+
+        st.warning(
+            "adaptive_plan.csv was not found. "
+            "Please generate/export the Phase 4 adaptive learning plan first."
+        )
+
+        st.stop()
+
+    adaptive_plan = pd.read_csv(
+        adaptive_file
+    )
+
     # ========================================================
-    # STEP 1: SELECT STUDY DAYS
+    # STEP 1
     # ========================================================
 
     st.subheader("1️⃣ Select Available Study Days")
@@ -724,11 +1217,15 @@ elif page == "Study Schedule":
     selected_days = st.multiselect(
         "Choose the days you are available:",
         options=days,
-        default=["Monday", "Wednesday", "Friday"]
+        default=[
+            "Monday",
+            "Wednesday",
+            "Friday"
+        ]
     )
 
     # ========================================================
-    # STEP 2: SELECT START AND END TIME
+    # STEP 2
     # ========================================================
 
     st.subheader("2️⃣ Select Available Study Time")
@@ -739,39 +1236,55 @@ elif page == "Study Schedule":
 
         study_start_time = st.time_input(
             "Study Start Time",
-            value=pd.to_datetime("18:00").time()
+            value=pd.to_datetime(
+                "18:00"
+            ).time()
         )
 
     with col2:
 
         study_end_time = st.time_input(
             "Study End Time",
-            value=pd.to_datetime("21:00").time()
+            value=pd.to_datetime(
+                "21:00"
+            ).time()
         )
 
     # ========================================================
-    # STEP 3: DISPLAY SELECTED AVAILABILITY
+    # STEP 3
     # ========================================================
 
     if selected_days:
 
-        st.info(
-            f"Available Days: {', '.join(selected_days)}"
-        )
+        st.subheader("3️⃣ Your Availability")
 
-        st.info(
-            f"Available Time: "
-            f"{study_start_time.strftime('%I:%M %p')} - "
-            f"{study_end_time.strftime('%I:%M %p')}"
-        )
+        availability_col1, availability_col2 = st.columns(2)
+
+        with availability_col1:
+
+            st.info(
+                f"📅 **Days:** "
+                f"{', '.join(selected_days)}"
+            )
+
+        with availability_col2:
+
+            st.info(
+                f"⏰ **Time:** "
+                f"{study_start_time.strftime('%I:%M %p')} - "
+                f"{study_end_time.strftime('%I:%M %p')}"
+            )
 
     # ========================================================
-    # STEP 4: GENERATE SCHEDULE
+    # STEP 4
     # ========================================================
+
+    st.subheader("4️⃣ Generate Schedule")
 
     if st.button(
         "📅 Generate Personalized Schedule",
-        type="primary"
+        type="primary",
+        use_container_width=True
     ):
 
         if len(selected_days) == 0:
@@ -788,10 +1301,6 @@ elif page == "Study Schedule":
 
         else:
 
-            # ------------------------------------------------
-            # Convert selected times to hours
-            # ------------------------------------------------
-
             start_hour = (
                 study_start_time.hour
                 + study_start_time.minute / 60
@@ -802,48 +1311,31 @@ elif page == "Study Schedule":
                 + study_end_time.minute / 60
             )
 
-            # ------------------------------------------------
-            # Convert to 15-minute slots
-            # ------------------------------------------------
+            start_slot = int(
+                start_hour * 4
+            )
 
-            start_slot = int(start_hour * 4)
-            end_slot = int(end_hour * 4)
-
-            # ------------------------------------------------
-            # Generate schedule from adaptive plan
-            # ------------------------------------------------
+            end_slot = int(
+                end_hour * 4
+            )
 
             try:
 
                 schedule_rows = []
 
-                # ------------------------------------------------
-                # Calculate total available minutes per day
-                # ------------------------------------------------
-
                 available_minutes_per_day = (
                     end_hour - start_hour
                 ) * 60
 
-                # ------------------------------------------------
-                # Current day pointer
-                # ------------------------------------------------
-
                 day_index = 0
 
-                current_day = selected_days[day_index]
+                current_day = selected_days[
+                    day_index
+                ]
 
                 current_slot = start_slot
 
-                # ------------------------------------------------
-                # Schedule each adaptive learning resource
-                # ------------------------------------------------
-
                 for _, row in adaptive_plan.iterrows():
-
-                    # --------------------------------------------
-                    # Estimated learning time
-                    # --------------------------------------------
 
                     estimated_time = row.get(
                         "Estimated Time",
@@ -851,15 +1343,14 @@ elif page == "Study Schedule":
                     )
 
                     try:
+
                         estimated_time = float(
                             estimated_time
                         )
-                    except:
-                        estimated_time = 30
 
-                    # --------------------------------------------
-                    # Convert minutes to 15-minute slots
-                    # --------------------------------------------
+                    except:
+
+                        estimated_time = 30
 
                     required_slots = max(
                         1,
@@ -874,19 +1365,17 @@ elif page == "Study Schedule":
                         required_slots * 15
                     )
 
-                    # --------------------------------------------
-                    # Check whether resource fits current day
-                    # --------------------------------------------
-
                     if (
-                        current_slot + required_slots
+                        current_slot
+                        + required_slots
                         > end_slot
                     ):
 
-                        # Move to next selected day
                         day_index += 1
 
-                        if day_index >= len(selected_days):
+                        if day_index >= len(
+                            selected_days
+                        ):
 
                             day_index = 0
 
@@ -896,24 +1385,33 @@ elif page == "Study Schedule":
 
                         current_slot = start_slot
 
-                    # --------------------------------------------
-                    # Calculate start/end time
-                    # --------------------------------------------
-
                     start_minutes = (
                         current_slot * 15
                     )
 
                     end_minutes = (
-                        (current_slot + required_slots)
+                        (
+                            current_slot
+                            + required_slots
+                        )
                         * 15
                     )
 
-                    start_h = start_minutes // 60
-                    start_m = start_minutes % 60
+                    start_h = (
+                        start_minutes // 60
+                    )
 
-                    end_h = end_minutes // 60
-                    end_m = end_minutes % 60
+                    start_m = (
+                        start_minutes % 60
+                    )
+
+                    end_h = (
+                        end_minutes // 60
+                    )
+
+                    end_m = (
+                        end_minutes % 60
+                    )
 
                     start_time = (
                         f"{int(start_h):02d}:"
@@ -924,10 +1422,6 @@ elif page == "Study Schedule":
                         f"{int(end_h):02d}:"
                         f"{int(end_m):02d}"
                     )
-
-                    # --------------------------------------------
-                    # Add schedule row
-                    # --------------------------------------------
 
                     schedule_rows.append(
                         {
@@ -954,31 +1448,17 @@ elif page == "Study Schedule":
                         }
                     )
 
-                    # --------------------------------------------
-                    # Move to next available slot
-                    # --------------------------------------------
-
-                    current_slot += required_slots
-
-                # ------------------------------------------------
-                # Convert to DataFrame
-                # ------------------------------------------------
+                    current_slot += (
+                        required_slots
+                    )
 
                 generated_schedule = pd.DataFrame(
                     schedule_rows
                 )
 
-                # ------------------------------------------------
-                # Save in session state
-                # ------------------------------------------------
-
                 st.session_state.generated_schedule = (
                     generated_schedule
                 )
-
-                # ------------------------------------------------
-                # Display result
-                # ------------------------------------------------
 
                 st.success(
                     "✓ Personalized study schedule generated!"
@@ -994,6 +1474,15 @@ elif page == "Study Schedule":
                     hide_index=True
                 )
 
+                st.download_button(
+                    label="⬇️ Download Study Schedule",
+                    data=generated_schedule.to_csv(
+                        index=False
+                    ),
+                    file_name="personalized_study_schedule.csv",
+                    mime="text/csv"
+                )
+
             except Exception as e:
 
                 st.error(
@@ -1001,13 +1490,15 @@ elif page == "Study Schedule":
                 )
 
     # ========================================================
-    # STEP 5: SHOW PREVIOUSLY GENERATED SCHEDULE
+    # PREVIOUSLY GENERATED SCHEDULE
     # ========================================================
 
     if (
-        "generated_schedule"
-        in st.session_state
+        st.session_state.generated_schedule
+        is not None
     ):
+
+        st.markdown("---")
 
         st.subheader(
             "📋 Current Study Schedule"
@@ -1019,24 +1510,46 @@ elif page == "Study Schedule":
             hide_index=True
         )
 
+
 # ============================================================
 # AI TUTOR
 # ============================================================
 
-elif page == "AI Tutor":
+elif page == "🤖 AI Tutor":
 
     st.header("🤖 AI Tutor")
 
     st.write(
-        "Ask questions about your learning topics."
+        """
+        Ask questions about important machine learning,
+        deep learning and artificial intelligence topics.
+        """
+    )
+
+    st.info(
+        """
+        💡 **Example questions**
+
+        • Explain CNN in simple terms.
+
+        • What is LSTM?
+
+        • What is Machine Learning?
+
+        • Explain neural networks.
+        """
     )
 
     question = st.text_area(
-        "Enter your question",
-        placeholder="Example: Explain CNN in simple terms."
+        "💬 Enter your question",
+        placeholder="Example: Explain CNN in simple terms.",
+        height=150
     )
 
-    if st.button("Ask AI Tutor"):
+    if st.button(
+        "🤖 Ask AI Tutor",
+        type="primary"
+    ):
 
         if question.strip() == "":
 
@@ -1046,87 +1559,142 @@ elif page == "AI Tutor":
 
         else:
 
-            # ------------------------------------------------
-            # Simple local tutor response
-            # ------------------------------------------------
-
             question_lower = question.lower()
 
             if "cnn" in question_lower:
 
                 response = """
-                CNN stands for Convolutional Neural Network.
+CNN stands for Convolutional Neural Network.
 
-                It is a deep learning model mainly used for
-                image processing and computer vision.
+It is a deep learning model mainly used for
+image processing and computer vision.
 
-                Main components:
-                1. Convolution layer
-                2. Pooling layer
-                3. Fully connected layer
-                4. Output layer
-                """
+Main components:
+
+1. Convolution layer
+2. Pooling layer
+3. Fully connected layer
+4. Output layer
+"""
 
             elif "lstm" in question_lower:
 
                 response = """
-                LSTM stands for Long Short-Term Memory.
+LSTM stands for Long Short-Term Memory.
 
-                It is a type of recurrent neural network designed
-                to learn long-term dependencies in sequential data.
+It is a type of recurrent neural network designed
+to learn long-term dependencies in sequential data.
 
-                LSTM is commonly used for:
-                - Time-series prediction
-                - Text generation
-                - Speech processing
-                - Sentiment analysis
-                """
+LSTM is commonly used for:
+
+- Time-series prediction
+- Text generation
+- Speech processing
+- Sentiment analysis
+"""
 
             elif "machine learning" in question_lower:
 
                 response = """
-                Machine Learning is a branch of Artificial
-                Intelligence where systems learn patterns from
-                data and use those patterns to make predictions
-                or decisions.
-                """
+Machine Learning is a branch of Artificial
+Intelligence where systems learn patterns from
+data and use those patterns to make predictions
+or decisions.
+"""
 
             else:
 
                 response = """
-                The AI Tutor recommends reviewing the relevant
-                learning material and practicing the topic.
+The AI Tutor recommends reviewing the relevant
+learning material and practicing the topic.
 
-                You can also ask about specific concepts such as
-                CNN, LSTM, Machine Learning, Deep Learning,
-                classification, or neural networks.
-                """
+You can also ask about specific concepts such as
+CNN, LSTM, Machine Learning, Deep Learning,
+classification, or neural networks.
+"""
 
-            st.success("AI Tutor Response")
+            st.markdown("---")
 
-            st.write(response)
+            st.subheader(
+                "💡 AI Tutor Response"
+            )
+
+            st.success(
+                "Your question has been processed."
+            )
+
+            st.write(
+                response
+            )
 
 
 # ============================================================
 # FEEDBACK
 # ============================================================
 
-elif page == "Feedback":
+elif page == "⭐ Feedback":
 
     st.header("⭐ Student Feedback")
 
-    rating = st.slider(
-        "Rate the Personalized Learning System",
-        min_value=1,
-        max_value=5,
-        value=5
+    st.write(
+        """
+        Your feedback helps evaluate and improve the
+        Personalized Learning Recommendation System.
+        """
     )
+
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+
+        rating = st.slider(
+            "⭐ Rate the system",
+            min_value=1,
+            max_value=5,
+            value=5
+        )
+
+    with col2:
+
+        st.write(
+            f"### Your Rating: {rating} / 5"
+        )
+
+        if rating == 5:
+
+            st.write("Excellent! 🎉")
+
+        elif rating == 4:
+
+            st.write("Very Good! 👍")
+
+        elif rating == 3:
+
+            st.write("Good. 🙂")
+
+        elif rating == 2:
+
+            st.write("Needs Improvement. 📝")
+
+        else:
+
+            st.write(
+                "We appreciate your feedback. 🙏"
+            )
 
     feedback = st.text_area(
-        "Enter your feedback"
+        "📝 Enter your feedback",
+        placeholder=(
+            "Tell us about your experience with "
+            "the Personalized Learning System..."
+        ),
+        height=150
     )
 
-    if st.button("Submit Feedback"):
+    if st.button(
+        "⭐ Submit Feedback",
+        type="primary"
+    ):
 
         feedback_record = {
             "Rating": rating,
@@ -1143,9 +1711,15 @@ elif page == "Feedback":
             "✓ Thank you! Your feedback has been recorded."
         )
 
-    if len(st.session_state.feedback) > 0:
+    if len(
+        st.session_state.feedback
+    ) > 0:
 
-        st.subheader("Feedback Records")
+        st.markdown("---")
+
+        st.subheader(
+            "📋 Feedback Records"
+        )
 
         feedback_df = pd.DataFrame(
             st.session_state.feedback
@@ -1158,16 +1732,23 @@ elif page == "Feedback":
         )
 
 
-
-
 # ============================================================
 # FOOTER
 # ============================================================
 
 st.markdown("---")
 
-st.caption(
-    "Personalized Learning Recommendation System | "
-    "M.Tech Project"
-)
+st.markdown(
+    """
+    <div class="footer">
 
+    🎓 <b>Personalized Learning Recommendation System</b>
+    <br>
+    AI-Powered Adaptive Learning Platform
+    <br>
+    M.Tech Project
+
+    </div>
+    """,
+    unsafe_allow_html=True
+)
