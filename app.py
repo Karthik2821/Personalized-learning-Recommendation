@@ -164,136 +164,285 @@ elif page == "Performance Prediction":
     )
 
     # --------------------------------------------------------
+    # USER-FRIENDLY CATEGORY MAPPINGS
+    # --------------------------------------------------------
+
+    # Gender encoding used by OULAD / LabelEncoder
+    gender_map = {
+        "♀ Female": 0,
+        "♂ Male": 1
+    }
+
+    # Region encoding
+    region_map = {
+        "East Anglian Region": 0,
+        "East Midlands Region": 1,
+        "Ireland": 2,
+        "London Region": 3,
+        "North Region": 4,
+        "North Western Region": 5,
+        "Scotland": 6,
+        "South East Region": 7,
+        "South Region": 8,
+        "South West Region": 9,
+        "Wales": 10,
+        "West Midlands Region": 11,
+        "Yorkshire Region": 12
+    }
+
+    # Highest education encoding
+    education_map = {
+        "A Level or Equivalent": 0,
+        "HE Qualification": 1,
+        "Lower Than A Level": 2,
+        "No Formal Qualification": 3,
+        "Post Graduate Qualification": 4
+    }
+
+    # IMD band encoding
+    imd_map = {
+        "0-10%": 0,
+        "10-20%": 1,
+        "20-30%": 2,
+        "30-40%": 3,
+        "40-50%": 4,
+        "50-60%": 5,
+        "60-70%": 6,
+        "70-80%": 7,
+        "80-90%": 8,
+        "90-100%": 9,
+        "Missing / Unknown": 10
+    }
+
+    # Disability encoding
+    disability_map = {
+        "No": 0,
+        "Yes": 1
+    }
+
+    # --------------------------------------------------------
     # INPUT FEATURES
     # --------------------------------------------------------
 
     col1, col2, col3 = st.columns(3)
 
+    # ========================================================
+    # COLUMN 1
+    # ========================================================
+
     with col1:
 
-        gender = st.number_input(
+        # ----------------------------------------------------
+        # GENDER
+        # ----------------------------------------------------
+
+        gender_label = st.radio(
             "Gender",
-            min_value=0,
-            max_value=1,
-            value=0
+            options=[
+                "♀ Female",
+                "♂ Male"
+            ],
+            horizontal=True
         )
 
-        region = st.number_input(
+        gender = gender_map[gender_label]
+
+        # ----------------------------------------------------
+        # AGE
+        # ----------------------------------------------------
+
+        age = st.selectbox(
+            "Age",
+            options=list(range(18, 71)),
+            index=2
+        )
+
+        # Convert actual age to OULAD age band
+        if age < 35:
+            age_band = 0
+        elif age < 55:
+            age_band = 1
+        else:
+            age_band = 2
+
+        # ----------------------------------------------------
+        # REGION
+        # ----------------------------------------------------
+
+        region_label = st.selectbox(
             "Region",
-            min_value=0,
-            value=0
+            options=list(region_map.keys())
         )
 
-        highest_education = st.number_input(
+        region = region_map[region_label]
+
+        # ----------------------------------------------------
+        # HIGHEST EDUCATION
+        # ----------------------------------------------------
+
+        education_label = st.selectbox(
             "Highest Education",
-            min_value=0,
-            value=0
+            options=list(education_map.keys())
         )
 
-        imd_band = st.number_input(
+        highest_education = education_map[
+            education_label
+        ]
+
+        # ----------------------------------------------------
+        # IMD BAND
+        # ----------------------------------------------------
+
+        imd_label = st.selectbox(
             "IMD Band",
-            min_value=0,
-            value=0
+            options=list(imd_map.keys())
         )
 
-        age_band = st.number_input(
-            "Age Band",
-            min_value=0,
-            value=0
-        )
+        imd_band = imd_map[imd_label]
 
-        disability = st.number_input(
+        # ----------------------------------------------------
+        # DISABILITY
+        # ----------------------------------------------------
+
+        disability_label = st.radio(
             "Disability",
-            min_value=0,
-            max_value=1,
-            value=0
+            options=[
+                "No",
+                "Yes"
+            ],
+            horizontal=True
         )
+
+        disability = disability_map[
+            disability_label
+        ]
+
+    # ========================================================
+    # COLUMN 2
+    # ========================================================
 
     with col2:
 
         num_of_prev_attempts = st.number_input(
             "Previous Attempts",
             min_value=0.0,
-            value=0.0
+            value=0.0,
+            step=1.0
         )
 
         studied_credits = st.number_input(
             "Studied Credits",
             min_value=0.0,
-            value=60.0
+            value=60.0,
+            step=10.0
         )
 
         total_assessments = st.number_input(
             "Total Assessments",
             min_value=0.0,
-            value=5.0
+            value=5.0,
+            step=1.0
         )
 
         average_score = st.number_input(
             "Average Score",
             min_value=0.0,
             max_value=100.0,
-            value=50.0
+            value=50.0,
+            step=1.0
         )
 
         highest_score = st.number_input(
             "Highest Score",
             min_value=0.0,
             max_value=100.0,
-            value=70.0
+            value=70.0,
+            step=1.0
         )
 
         lowest_score = st.number_input(
             "Lowest Score",
             min_value=0.0,
             max_value=100.0,
-            value=30.0
+            value=30.0,
+            step=1.0
         )
+
+    # ========================================================
+    # COLUMN 3
+    # ========================================================
 
     with col3:
 
         total_clicks = st.number_input(
             "Total Clicks",
             min_value=0.0,
-            value=100.0
+            value=100.0,
+            step=1.0
         )
 
         average_clicks = st.number_input(
             "Average Clicks",
             min_value=0.0,
-            value=10.0
+            value=10.0,
+            step=1.0
         )
 
         max_clicks = st.number_input(
             "Maximum Clicks",
             min_value=0.0,
-            value=20.0
+            value=20.0,
+            step=1.0
         )
 
         resources_accessed = st.number_input(
             "Resources Accessed",
             min_value=0.0,
-            value=5.0
+            value=5.0,
+            step=1.0
         )
 
         active_days = st.number_input(
             "Active Days",
             min_value=0.0,
-            value=10.0
+            value=10.0,
+            step=1.0
         )
 
         registration_day = st.number_input(
             "Registration Day",
             min_value=0.0,
-            value=0.0
+            value=0.0,
+            step=1.0
         )
 
         course_duration = st.number_input(
             "Course Duration",
             min_value=0.0,
-            value=240.0
+            value=240.0,
+            step=1.0
         )
 
+    # --------------------------------------------------------
+    # SHOW INTERNAL AGE BAND INFORMATION
+    # --------------------------------------------------------
+
+    with st.expander("ℹ️ Age information"):
+
+        if age < 35:
+            age_band_text = "0–35"
+        elif age < 55:
+            age_band_text = "35–55"
+        else:
+            age_band_text = "55+"
+
+        st.write(
+            f"Selected Age: **{age} years**"
+        )
+
+        st.write(
+            f"Model Age Band: **{age_band_text}**"
+        )
 
     # --------------------------------------------------------
     # PREDICTION
@@ -351,13 +500,19 @@ elif page == "Performance Prediction":
 
         try:
 
-            prediction = ml_model.predict(input_data)
+            prediction = ml_model.predict(
+                input_data
+            )
 
             result = encoder.inverse_transform(
                 prediction.astype(int)
             )[0]
 
             st.session_state.prediction = result
+
+            # ------------------------------------------------
+            # DISPLAY RESULT
+            # ------------------------------------------------
 
             st.success(
                 f"Predicted Student Result: **{result}**"
@@ -376,10 +531,12 @@ elif page == "Performance Prediction":
                 st.markdown(
                     """
                     **Recommended actions:**
-                    - Review weak topics
-                    - Increase practice sessions
-                    - Take frequent quizzes
-                    - Use AI Tutor assistance
+
+                    - 📚 Review weak topics
+                    - 📝 Increase practice sessions
+                    - ❓ Take frequent quizzes
+                    - 🤖 Use AI Tutor assistance
+                    - 📅 Follow the personalized study schedule
                     """
                 )
 
@@ -389,11 +546,33 @@ elif page == "Performance Prediction":
                     "The student is progressing satisfactorily."
                 )
 
+                st.markdown(
+                    """
+                    **Recommended actions:**
+
+                    - Continue the current learning plan
+                    - Practice regularly
+                    - Follow the recommended study schedule
+                    - Use quizzes to maintain performance
+                    """
+                )
+
             elif result == "Distinction":
 
                 st.success(
                     "Excellent performance! Advanced learning "
                     "resources are recommended."
+                )
+
+                st.markdown(
+                    """
+                    **Recommended actions:**
+
+                    - 🚀 Explore advanced topics
+                    - 📚 Attempt challenging resources
+                    - 🧠 Practice advanced problems
+                    - 🎯 Maintain consistent learning
+                    """
                 )
 
             elif result == "Withdrawn":
@@ -402,12 +581,22 @@ elif page == "Performance Prediction":
                     "The student may be at risk of disengagement."
                 )
 
+                st.markdown(
+                    """
+                    **Recommended actions:**
+
+                    - 🤖 Use AI Tutor support
+                    - 📅 Follow a manageable study schedule
+                    - 📚 Start with easier learning resources
+                    - 📊 Monitor learning activity regularly
+                    """
+                )
+
         except Exception as e:
 
             st.error(
                 f"Prediction error: {str(e)}"
             )
-
 
 # ============================================================
 # COURSE RECOMMENDATIONS
