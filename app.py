@@ -508,35 +508,327 @@ elif page == "Study Schedule":
 
     st.header("📅 Personalized Study Schedule")
 
-    schedule_file = BASE_DIR / "schedule.csv"
+    st.write(
+        """
+        Select the days and time range when you are available
+        for studying. The system will generate a personalized
+        schedule based on your adaptive learning plan.
+        """
+    )
 
-    if schedule_file.exists():
+    # ========================================================
+    # STEP 1: SELECT STUDY DAYS
+    # ========================================================
 
-        schedule_df = pd.read_csv(
-            schedule_file
+    st.subheader("1️⃣ Select Available Study Days")
+
+    days = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+    ]
+
+    selected_days = st.multiselect(
+        "Choose the days you are available:",
+        options=days,
+        default=["Monday", "Wednesday", "Friday"]
+    )
+
+    # ========================================================
+    # STEP 2: SELECT START AND END TIME
+    # ========================================================
+
+    st.subheader("2️⃣ Select Available Study Time")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        study_start_time = st.time_input(
+            "Study Start Time",
+            value=pd.to_datetime("18:00").time()
+        )
+
+    with col2:
+
+        study_end_time = st.time_input(
+            "Study End Time",
+            value=pd.to_datetime("21:00").time()
+        )
+
+    # ========================================================
+    # STEP 3: DISPLAY SELECTED AVAILABILITY
+    # ========================================================
+
+    if selected_days:
+
+        st.info(
+            f"Available Days: {', '.join(selected_days)}"
+        )
+
+        st.info(
+            f"Available Time: "
+            f"{study_start_time.strftime('%I:%M %p')} - "
+            f"{study_end_time.strftime('%I:%M %p')}"
+        )
+
+    # ========================================================
+    # STEP 4: GENERATE SCHEDULE
+    # ========================================================
+
+    if st.button(
+        "📅 Generate Personalized Schedule",
+        type="primary"
+    ):
+
+        if len(selected_days) == 0:
+
+            st.error(
+                "Please select at least one study day."
+            )
+
+        elif study_start_time >= study_end_time:
+
+            st.error(
+                "Study end time must be later than study start time."
+            )
+
+        else:
+
+            # ------------------------------------------------
+            # Convert selected times to hours
+            # ------------------------------------------------
+
+            start_hour = (
+                study_start_time.hour
+                + study_start_time.minute / 60
+            )
+
+            end_hour = (
+                study_end_time.hour
+                + study_end_time.minute / 60
+            )
+
+            # ------------------------------------------------
+            # Convert to 15-minute slots
+            # ------------------------------------------------
+
+            start_slot = int(start_hour * 4)
+            end_slot = int(end_hour * 4)
+
+            # ------------------------------------------------
+            # Generate schedule from adaptive plan
+            # ------------------------------------------------
+
+            try:
+
+                schedule_rows = []
+
+                # ------------------------------------------------
+                # Calculate total available minutes per day
+                # ------------------------------------------------
+
+                available_minutes_per_day = (
+                    end_hour - start_hour
+                ) * 60
+
+                # ------------------------------------------------
+                # Current day pointer
+                # ------------------------------------------------
+
+                day_index = 0
+
+                current_day = selected_days[day_index]
+
+                current_slot = start_slot
+
+                # ------------------------------------------------
+                # Schedule each adaptive learning resource
+                # ------------------------------------------------
+
+                for _, row in adaptive_plan.iterrows():
+
+                    # --------------------------------------------
+                    # Estimated learning time
+                    # --------------------------------------------
+
+                    estimated_time = row.get(
+                        "Estimated Time",
+                        30
+                    )
+
+                    try:
+                        estimated_time = float(
+                            estimated_time
+                        )
+                    except:
+                        estimated_time = 30
+
+                    # --------------------------------------------
+                    # Convert minutes to 15-minute slots
+                    # --------------------------------------------
+
+                    required_slots = max(
+                        1,
+                        int(
+                            np.ceil(
+                                estimated_time / 15
+                            )
+                        )
+                    )
+
+                    duration_minutes = (
+                        required_slots * 15
+                    )
+
+                    # --------------------------------------------
+                    # Check whether resource fits current day
+                    # --------------------------------------------
+
+                    if (
+                        current_slot + required_slots
+                        > end_slot
+                    ):
+
+                        # Move to next selected day
+                        day_index += 1
+
+                        if day_index >= len(selected_days):
+
+                            day_index = 0
+
+                        current_day = selected_days[
+                            day_index
+                        ]
+
+                        current_slot = start_slot
+
+                    # --------------------------------------------
+                    # Calculate start/end time
+                    # --------------------------------------------
+
+                    start_minutes = (
+                        current_slot * 15
+                    )
+
+                    end_minutes = (
+                        (current_slot + required_slots)
+                        * 15
+                    )
+
+                    start_h = start_minutes // 60
+                    start_m = start_minutes % 60
+
+                    end_h = end_minutes // 60
+                    end_m = end_minutes % 60
+
+                    start_time = (
+                        f"{int(start_h):02d}:"
+                        f"{int(start_m):02d}"
+                    )
+
+                    end_time = (
+                        f"{int(end_h):02d}:"
+                        f"{int(end_m):02d}"
+                    )
+
+                    # --------------------------------------------
+                    # Add schedule row
+                    # --------------------------------------------
+
+                    schedule_rows.append(
+                        {
+                            "Day": current_day,
+                            "Start Time": start_time,
+                            "End Time": end_time,
+                            "Course": row.get(
+                                "course",
+                                ""
+                            ),
+                            "Learning Resource": row.get(
+                                "title",
+                                ""
+                            ),
+                            "Difficulty": row.get(
+                                "difficulty",
+                                ""
+                            ),
+                            "Duration (min)": duration_minutes,
+                            "Learning Level": row.get(
+                                "Learning Level",
+                                ""
+                            )
+                        }
+                    )
+
+                    # --------------------------------------------
+                    # Move to next available slot
+                    # --------------------------------------------
+
+                    current_slot += required_slots
+
+                # ------------------------------------------------
+                # Convert to DataFrame
+                # ------------------------------------------------
+
+                generated_schedule = pd.DataFrame(
+                    schedule_rows
+                )
+
+                # ------------------------------------------------
+                # Save in session state
+                # ------------------------------------------------
+
+                st.session_state.generated_schedule = (
+                    generated_schedule
+                )
+
+                # ------------------------------------------------
+                # Display result
+                # ------------------------------------------------
+
+                st.success(
+                    "✓ Personalized study schedule generated!"
+                )
+
+                st.subheader(
+                    "📋 Your Personalized Schedule"
+                )
+
+                st.dataframe(
+                    generated_schedule,
+                    use_container_width=True,
+                    hide_index=True
+                )
+
+            except Exception as e:
+
+                st.error(
+                    f"Schedule generation error: {str(e)}"
+                )
+
+    # ========================================================
+    # STEP 5: SHOW PREVIOUSLY GENERATED SCHEDULE
+    # ========================================================
+
+    if (
+        "generated_schedule"
+        in st.session_state
+    ):
+
+        st.subheader(
+            "📋 Current Study Schedule"
         )
 
         st.dataframe(
-            schedule_df,
+            st.session_state.generated_schedule,
             use_container_width=True,
             hide_index=True
         )
-
-    else:
-
-        st.warning(
-            """
-            schedule.csv was not found.
-
-            Export the Phase 5 schedule using:
-
-            schedule_df.to_csv(
-                "schedule.csv",
-                index=False
-            )
-            """
-        )
-
 
 # ============================================================
 # AI TUTOR
