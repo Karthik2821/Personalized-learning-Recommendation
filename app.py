@@ -1158,61 +1158,6 @@ elif page == "Feedback":
         )
 
 
-# ============================================================
-# API INFORMATION
-# ============================================================
-
-elif page == "API":
-
-    st.header("🔌 Prediction API")
-
-    st.info(
-        """
-        The trained Phase 2 model can also be exposed as an API.
-        """
-    )
-
-    st.subheader("API Input Format")
-
-    example_input = {
-        "gender": 0,
-        "region": 0,
-        "highest_education": 2,
-        "imd_band": 5,
-        "age_band": 2,
-        "num_of_prev_attempts": 0,
-        "studied_credits": 60,
-        "disability": 0,
-        "total_assessments": 5,
-        "average_score": 65,
-        "highest_score": 85,
-        "lowest_score": 40,
-        "total_clicks": 100,
-        "average_clicks": 10,
-        "max_clicks": 20,
-        "resources_accessed": 8,
-        "active_days": 15,
-        "registration_day": 0,
-        "course_duration": 240
-    }
-
-    st.json(example_input)
-
-    st.subheader("Expected Response")
-
-    st.json(
-        {
-            "prediction": "Pass"
-        }
-    )
-
-    st.warning(
-        """
-        Streamlit is primarily a dashboard framework.
-        For a production REST API, use FastAPI as a separate
-        service alongside this Streamlit application.
-        """
-    )
 
 
 # ============================================================
